@@ -1,30 +1,38 @@
 package com.leilao.lance.rapido;
 
-import com.leilao.lance.rapido.model.BankInfo;
 import com.leilao.lance.rapido.model.User;
-import com.leilao.lance.rapido.repository.ProductRepository;
-import com.leilao.lance.rapido.repository.UserRepository;
+import com.leilao.lance.rapido.service.ProductService;
+import com.leilao.lance.rapido.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class DataLoader implements ApplicationRunner {
-    private UserRepository userRepository;
-    private ProductRepository productRepository;
+    private UserService userService;
+    private ProductService productService;
 
     @Autowired
-    public DataLoader(UserRepository userRepository, ProductRepository productRepository){
-        this.userRepository = userRepository;
-        this.productRepository = productRepository;
+    public DataLoader(UserService userService, ProductService productService){
+        this.userService = userService;
+        this.productService = productService;
     }
 
     public void run(ApplicationArguments args){
         User user = new User(1,"fsadkjf","fsdafas","fsdafds", null);
-       userRepository.save(user);
+       userService.saveUser(user);
        System.out.println("Created newUser");
+  Optional<User> queryUser =  userService.findUser(user.getUsername(), user.getPassword());
+  if(queryUser.isEmpty()){
+      System.out.println("User not found");
+  }else {
+      System.out.println("User found");
+      System.out.println(queryUser.get().toString());
 
-      // ));
+  }
+
     }
 }
