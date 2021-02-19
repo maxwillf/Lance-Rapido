@@ -8,12 +8,15 @@ import javax.persistence.*;
 @Data
 @Entity
 public class Bid {
-   @ManyToOne
-   Product product;
-
    @Id
    @GeneratedValue(strategy = GenerationType.AUTO)
    Integer id;
+
+   @ManyToOne
+   Product product;
+   @ManyToOne
+   User user;
+
 
    Double bidValue;
 }

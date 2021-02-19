@@ -1,5 +1,6 @@
 package com.leilao.lance.rapido;
 
+import com.leilao.lance.rapido.model.Product;
 import com.leilao.lance.rapido.model.User;
 import com.leilao.lance.rapido.service.ProductService;
 import com.leilao.lance.rapido.service.UserService;
@@ -8,6 +9,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -32,6 +34,18 @@ public class DataLoader implements ApplicationRunner {
       System.out.println("User found");
       System.out.println(queryUser.get().toString());
 
+      Product product = new Product();
+      User foundUser = queryUser.get();
+      product.setUser(foundUser);
+      productService.saveProduct(product);
+      List<Product> queryProducts = productService.findByUserId(foundUser.getId());
+      if(queryProducts.isEmpty()){
+          System.out.println("Products not found");
+      }
+      else {
+          System.out.println("Products found: " + queryProducts.toString());
+
+      }
   }
 
     }

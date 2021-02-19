@@ -4,6 +4,7 @@ import com.leilao.lance.rapido.model.Product;
 import com.leilao.lance.rapido.repository.ProductRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -18,9 +19,10 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-//    public Optional<Product> findProduct(String productname, String id){
-//        return Optional.ofNullable(productRepository.findByProductId(productname,id));
-//    }
-
-
+    public List<Product> findByUserId(Integer userId){
+        return productRepository.findByUserId(userId);
+    }
+    public List<Product> findByBidsUserId(Integer userId){
+        return productRepository.findByBidsUserId(userId);
+    }
 }

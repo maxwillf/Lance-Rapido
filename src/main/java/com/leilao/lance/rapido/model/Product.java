@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -15,17 +16,20 @@ public class Product implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @ManyToOne
+    private User user;
+
     private String name;
     private LocalDateTime creationTime;
     private LocalDateTime lastUpdateTime;
     private Double initialBid;
 
-    @OneToMany
-    private List<ProductImage> images;
+    @OneToMany(fetch = FetchType.EAGER)
+    private Set<ProductImage> images;
 
-    @OneToMany
-    private List<Bid> bids;
+    @OneToMany(fetch = FetchType.EAGER)
+    private Set<Bid> bids;
 
-    @OneToMany
-    private List<Comment> comments;
+    @OneToMany(fetch = FetchType.EAGER)
+    private Set<Comment> comments;
 }
