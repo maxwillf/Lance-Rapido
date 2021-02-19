@@ -18,9 +18,9 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Optional<Product> findProduct(int productID){
-        return Optional.ofNullable(productRepository.findByProductID(productID));
-    }
+//    public Optional<Product> findProduct(String productname, String id){
+//        return Optional.ofNullable(productRepository.findByProductId(productname,id));
+//    }
 
 
 }

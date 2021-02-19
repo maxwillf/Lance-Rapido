@@ -20,10 +20,10 @@ public class ProductController {
         return productService.saveProduct(newProduct);
     }
 
-    @GetMapping("/{id}")
-    public Optional<Product> getProductByID(@PathVariable int productID) {
-        return productService.findProduct(productID);
-    }
+//    @GetMapping("/{id}")
+//    public Optional<Product> getProductByID(@PathVariable int productID) {
+//        return productService.findProduct(productID);
+//    }
 
 
 
