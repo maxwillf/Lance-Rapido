@@ -13,5 +13,8 @@ public class Comment {
     private Integer id;
 
     @ManyToOne
+    @JoinColumn(name = "product_id")
     Product product;
+
+    String content;
 }

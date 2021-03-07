@@ -27,9 +27,9 @@ public class Product implements Serializable {
     @OneToMany(fetch = FetchType.EAGER)
     private Set<ProductImage> images;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Bid> bids;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Comment> comments;
 }

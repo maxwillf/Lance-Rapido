@@ -1,5 +1,7 @@
 package com.leilao.lance.rapido;
 
+import com.leilao.lance.rapido.model.Bid;
+import com.leilao.lance.rapido.model.Comment;
 import com.leilao.lance.rapido.model.Product;
 import com.leilao.lance.rapido.model.User;
 import com.leilao.lance.rapido.service.ProductService;
@@ -9,8 +11,10 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class DataLoader implements ApplicationRunner {
@@ -37,6 +41,22 @@ public class DataLoader implements ApplicationRunner {
       Product product = new Product();
       User foundUser = queryUser.get();
       product.setUser(foundUser);
+      Bid bid = new Bid();
+      bid.setUser(foundUser);
+              Set<Bid> bids = new HashSet<Bid>() {{
+
+                  add(bid);
+              }
+              } ;
+      product.setBids(bids);
+      Comment comment = new Comment();
+      Set<Comment> comments = new HashSet<Comment>() {{
+
+          add(comment);
+      }
+      } ;
+      product.setComments(comments);
+      System.out.println("DEBUG PRODUCT: "+ product.toString());
       productService.saveProduct(product);
       List<Product> queryProducts = productService.findByUserId(foundUser.getId());
       if(queryProducts.isEmpty()){
@@ -44,6 +64,14 @@ public class DataLoader implements ApplicationRunner {
       }
       else {
           System.out.println("Products found: " + queryProducts.toString());
+
+      }
+      List<Product> queryBidsProducts = productService.findByBidsUserId(foundUser.getId());
+      if(queryBidsProducts.isEmpty()){
+          System.out.println("Products with bid not found");
+      }
+      else {
+          System.out.println("Products with bid found: " + queryBidsProducts.toString());
 
       }
   }
