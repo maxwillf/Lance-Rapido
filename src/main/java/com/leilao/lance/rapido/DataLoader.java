@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
@@ -50,6 +52,11 @@ public class DataLoader implements ApplicationRunner {
               } ;
       product.setBids(bids);
       Comment comment = new Comment();
+      Comment commentChild = new Comment();
+      commentChild.setParent(comment);
+//      comment.setUser(foundUser);
+//      commentChild.setUser(foundUser);
+      comment.setChildren(new ArrayList<Comment>(Arrays.asList(commentChild)));
       Set<Comment> comments = new HashSet<Comment>() {{
 
           add(comment);

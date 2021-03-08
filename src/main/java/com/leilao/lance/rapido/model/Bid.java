@@ -15,7 +15,7 @@ public class Bid {
    Integer id;
 
    @ManyToOne
-           @JoinColumn(name = "product_id")
+   @JoinColumn(name = "product_id")
    Product product;
    @ManyToOne
    User user;
