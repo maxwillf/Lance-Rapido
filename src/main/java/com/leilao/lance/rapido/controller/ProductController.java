@@ -32,12 +32,12 @@ public class ProductController {
         return productService.saveComment(comment);
     }
     // Finds the products the user is selling
-    @GetMapping("/product/seller-items/{userId} ")
+    @GetMapping("/product/seller-items/{userId}")
     public List<Product> findByUserId(@PathVariable(value = "userId") Integer userId){
         return productService.findByUserId(userId);
     }
     // Finds the products for which a user has done a bid
-    @GetMapping("/product/buyer-items/{userId} ")
+    @GetMapping("/product/buyer-items/{userId}")
     public List<Product> findByBidsUserId(@PathVariable(value = "userId") Integer userId){
         return productService.findByBidsUserId(userId);
     }

@@ -34,11 +34,11 @@ public class ProductService {
             return null;
         }
         else {
- Product product = productOpt.get();
-Set<Bid> bids = product.getBids();
-bids.add(bid);
-product.setBids(bids);
-return productRepository.save(product);
+            Product product = productOpt.get();
+            Set<Bid> bids = product.getBids();
+            bids.add(bid);
+            product.setBids(bids);
+            return productRepository.save(product);
         }
     }
 

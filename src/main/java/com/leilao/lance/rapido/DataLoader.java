@@ -31,7 +31,9 @@ public class DataLoader implements ApplicationRunner {
 
     public void run(ApplicationArguments args){
         User user = new User(1,"fsadkjf","fsdafas","fsdafds", null);
+        User userTeste = new User(2,"max william","teste","deu certo", null);
        userService.saveUser(user);
+        userService.saveUser(userTeste);
        System.out.println("Created newUser");
   Optional<User> queryUser =  userService.findUser(user.getUsername(), user.getPassword());
   if(queryUser.isEmpty()){
