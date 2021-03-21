@@ -3,9 +3,9 @@ package com.leilao.lance.rapido.model;
 import lombok.Data;
 
 import javax.persistence.*;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -23,6 +23,8 @@ public class Product implements Serializable {
     private LocalDateTime creationTime;
     private LocalDateTime lastUpdateTime;
     private Double initialBid;
+    private LocalDateTime timeLimit;
+    private boolean active;
 
     @OneToMany(fetch = FetchType.EAGER)
     private Set<ProductImage> images;
@@ -32,4 +34,5 @@ public class Product implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Comment> comments;
+    
 }

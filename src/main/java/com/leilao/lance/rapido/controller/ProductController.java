@@ -9,7 +9,6 @@ import com.leilao.lance.rapido.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class ProductController {
@@ -31,20 +30,46 @@ public class ProductController {
     public Product saveComment(@RequestBody Comment comment){
         return productService.saveComment(comment);
     }
+    
     // Finds the products the user is selling
     @GetMapping("/product/seller-items/{userId}")
     public List<Product> findByUserId(@PathVariable(value = "userId") Integer userId){
         return productService.findByUserId(userId);
     }
-    // Finds the products for which a user has done a bid
-    @GetMapping("/product/buyer-items/{userId}")
-    public List<Product> findByBidsUserId(@PathVariable(value = "userId") Integer userId){
-        return productService.findByBidsUserId(userId);
+    
+    // Finds the active products for which an user is bidding
+    @GetMapping("/product/buying-items/{userId}")
+    public List<Product> findActiveBidsByUserId(@PathVariable(value = "userId") Integer userId){
+        return productService.findActiveBidsByUserId(userId);
     }
 
+    
     @GetMapping("/catalog")
     public List<Product> getCatalog(){
         return productService.getCatalog();
     }
+    
+    // Finds the sold products from an user
+    @GetMapping("/product/sold-items/{userId}")
+    public List<Product> findSoldProductsByUserId(@PathVariable(value = "userId") Integer userId){
+    	return productService.findSoldProductsByUserId(userId);
+    }
+    
+    // Finds the products an user is selling
+    @GetMapping("/product/selling-items/{userId}")
+    public List<Product> findActiveProductsByUserId(@PathVariable(value = "userId") Integer userId){
+    	return productService.findActiveProductsByUserId(userId);
+    }
+    
+    // Finds the products an user bought
+    /*@GetMapping("/product/bought-items/{userId}")
+    public List<Product> findActiveProductsByUserId(@PathVariable(value = "userId") Integer userId){
+    	return productService.findActiveProductsByUserId(userId);
+    }*/
+    
+    // Finds the highest product bid
+    /*@GetMapping("/product/highest-bid")
+    public List<Product> findActiveProductsByUserId(@PathVariable(value = "userId") Integer userId){
+    	return productService.findActiveProductsByUserId(userId);*/
 
 }
