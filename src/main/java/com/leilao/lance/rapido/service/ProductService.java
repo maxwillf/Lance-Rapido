@@ -3,6 +3,7 @@ package com.leilao.lance.rapido.service;
 import com.leilao.lance.rapido.model.Bid;
 import com.leilao.lance.rapido.model.Comment;
 import com.leilao.lance.rapido.model.Product;
+import com.leilao.lance.rapido.repository.BidRepository;
 import com.leilao.lance.rapido.repository.ProductRepository;
 import org.springframework.stereotype.Component;
 
@@ -18,9 +19,11 @@ import java.util.Set;
 @Transactional
 public class ProductService {
     private final ProductRepository productRepository;
+    private final BidRepository bidRepository;
 
-    public ProductService(ProductRepository productRepository){
-        this.productRepository = productRepository ;
+    public ProductService(ProductRepository productRepository, BidRepository bidRepository){
+        this.productRepository = productRepository;
+        this.bidRepository = bidRepository;
     }
 
     public Product saveProduct(Product product){
@@ -51,8 +54,8 @@ public class ProductService {
     	
     	return product;
     }
-
-    public Product saveBid(Bid bid){
+    
+    public Product addBid(Bid bid) {
         Optional<Product> productOpt = productRepository.findById(bid.getProduct().getId());
         if(productOpt.isEmpty()){
             return null;
@@ -60,22 +63,38 @@ public class ProductService {
             Product product = productOpt.get();
             if(!updateProductState(product).isActive())
             	return null;
-            
+       
             Set<Bid> bids = product.getBids();
             bids.add(bid);
             product.setBids(bids);
-            return productRepository.save(product);
+            product.setHighestBid(findHighestBid(product));
+            saveProduct(product);
+            return product;
         }
     }
     
-    public double getHighestBid(Product product) {
-    	double max = 0.0;
-    	for (Bid bid: product.getBids()) {
-    		if (bid.getBidValue() > max)
-    			max = bid.getBidValue();
-    	}
+    public Bid findHighestBid(Product product) {
+    	if (product.equals(null))
+    		return null;
     	
-    	return max;
+        Bid highestBid = product.getBids().iterator().next();
+        if (product.getBids().size() > 1) {
+	        for (Bid bid: product.getBids()) {
+	        	if (bid.getBidValue() > highestBid.getBidValue())
+	        		highestBid = bid;
+	        }
+        }
+    	return highestBid;
+    }
+    
+    public List<Product> findUserBoughtProducts(Integer userId) {
+    	Set<Bid> bids = bidRepository.findByUserId(userId);
+    	List<Product> boughtProducts = Collections.emptyList();
+    	for (Bid bid : bids) {
+    		if (bid.getProduct().getHighestBid().equals(bid))
+    			boughtProducts.add(bid.getProduct());
+    	}
+    	return boughtProducts;
     }
 
     public Product saveComment(Comment comment){
@@ -108,5 +127,9 @@ public class ProductService {
     }
     public List<Product> findActiveBidsByUserId(Integer userId){
         return productRepository.findByBidsUserIdAndActiveTrue(userId);
+    }
+    
+    public Product findActiveProductById(Integer productId) {
+    	return productRepository.findByIdAndActiveTrue(productId);
     }
 }

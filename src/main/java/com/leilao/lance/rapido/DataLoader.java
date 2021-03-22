@@ -16,6 +16,8 @@ import java.util.List;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -31,41 +33,39 @@ public class DataLoader implements ApplicationRunner {
 	}
 
 	public void run(ApplicationArguments args) {
-		User user = new User(1, "fsadkjf", "fsdafas", "fsdafds", null);
-		User userTeste = new User(2, "max william", "teste", "deu certo", null);
+		User user = new User(1, "william correa", "senhaqualquer", "william@email.com", null);
+		User user2 = new User(2, "max william", "ehumasenha", "max@email.com", null);
+		User user3 = new User(3, "michel jean", "senha123", "michel@email.com", null);
 		userService.saveUser(user);
-		userService.saveUser(userTeste);
-		System.out.println("Created newUser");
+		userService.saveUser(user2);
+		userService.saveUser(user3);
+		System.out.println("Created " + user.getUsername() + ", " + user2.getUsername() + ", " + user3.getUsername());
 		
 		Optional<User> queryUser = userService.findUser(user.getUsername(), user.getPassword());
 		if (queryUser.isEmpty()) {
 			System.out.println("User not found");
 		} else {
-			System.out.println("User found");
-			System.out.println(queryUser.get().toString());
-
-			Product product = new Product();
-			product.setCreationTime(LocalDateTime.now());
-			product.setLastUpdateTime(LocalDateTime.now());
-			product.setTimeLimit(LocalDateTime.now().plusDays(5));
-			product.setActive(true);
+			System.out.println("User found: " + queryUser.get().toString());
 			User foundUser = queryUser.get();
-			product.setUser(foundUser);
+
+			Product product = new Product(foundUser, "bicicleta", 250.00);
 			
-			Bid bid = new Bid();
-			bid.setUser(foundUser);
+			Bid bid = new Bid(null, user2, 250.00);
+			
+			@SuppressWarnings("serial")
 			Set<Bid> bids = new HashSet<Bid>() {
 				{
 					add(bid);
 				}
 			};
+			
 			product.setBids(bids);
-			Comment comment = new Comment();
-			Comment commentChild = new Comment();
+			bid.setProduct(product);
+			Comment comment = new Comment("essa bicicleta anda??", null, product, user2);
+			Comment commentChild = new Comment("e ela vai andar como se n tem pernas??", comment, product, foundUser);
 			commentChild.setParent(comment);
-//      	comment.setUser(foundUser);
-//      	commentChild.setUser(foundUser);
 			comment.setChildren(new ArrayList<Comment>(Arrays.asList(commentChild)));
+			
 			Set<Comment> comments = new HashSet<Comment>() {
 				{
 					add(comment);

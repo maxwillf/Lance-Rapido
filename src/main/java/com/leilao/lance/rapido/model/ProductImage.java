@@ -9,6 +9,6 @@ import javax.persistence.Id;
 public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-            private Integer id;
+    private Integer id;
     private byte[] image;
 }

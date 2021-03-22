@@ -1,7 +1,6 @@
 package com.leilao.lance.rapido.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,8 +24,12 @@ public class Bid {
    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
    Product product;
    @ManyToOne
-//   @JoinColumn(name = "user_id")
    User user;
-
    Double bidValue;
+   
+   public Bid(Product product, User user, double bidValue) {
+	   this.product = product;
+	   this.user = user;
+	   this.bidValue = bidValue;
+   }
 }

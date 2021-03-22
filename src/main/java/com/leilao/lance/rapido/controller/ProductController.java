@@ -24,11 +24,18 @@ public class ProductController {
 
     @PostMapping("/product/bid")
     public Product saveBid(@RequestBody  Bid bid){
-       return productService.saveBid(bid);
+       return productService.addBid(bid);
     }
     @PostMapping("/product/comment")
     public Product saveComment(@RequestBody Comment comment){
         return productService.saveComment(comment);
+    }
+    
+    @PutMapping("product/remove/{userId}")
+    public Product setProductToInactive(@RequestBody Integer productId) {
+    	Product product = productService.findActiveProductById(productId);
+    	product.setActive(false);
+    	return productService.saveProduct(product);
     }
     
     // Finds the products the user is selling
@@ -43,7 +50,7 @@ public class ProductController {
         return productService.findActiveBidsByUserId(userId);
     }
 
-    
+    // Finds the active products being sold
     @GetMapping("/catalog")
     public List<Product> getCatalog(){
         return productService.getCatalog();
@@ -62,14 +69,16 @@ public class ProductController {
     }
     
     // Finds the products an user bought
-    /*@GetMapping("/product/bought-items/{userId}")
-    public List<Product> findActiveProductsByUserId(@PathVariable(value = "userId") Integer userId){
-    	return productService.findActiveProductsByUserId(userId);
-    }*/
+    @GetMapping("/product/bought-items/{userId}")
+    public List<Product> findUserBoughtProducts(@PathVariable(value = "userId") Integer userId){
+    	return productService.findUserBoughtProducts(userId);
+    }
     
     // Finds the highest product bid
-    /*@GetMapping("/product/highest-bid")
-    public List<Product> findActiveProductsByUserId(@PathVariable(value = "userId") Integer userId){
-    	return productService.findActiveProductsByUserId(userId);*/
+    @GetMapping("/product/highest-bid/{productId}")
+    public Bid findActiveProductHighestBid(Integer productId){
+    	Product product = productService.findActiveProductById(productId);
+    	return product.getHighestBid();
+    }
 
 }

@@ -1,10 +1,10 @@
 package com.leilao.lance.rapido.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -12,6 +12,7 @@ import java.util.Collection;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -38,5 +39,12 @@ public class Comment {
 
     @ManyToOne
     User user;
+    
+    public Comment(String content, Comment parent, Product product, User user) {
+    	this.content = content;
+    	this.parent = parent;
+    	this.product = product;
+    	this.user = user;
+    }
 
 }
