@@ -13,11 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -41,6 +38,41 @@ public class DataLoader implements ApplicationRunner {
 		userService.saveUser(user3);
 		System.out.println("Created " + user.getUsername() + ", " + user2.getUsername() + ", " + user3.getUsername());
 		
+		Product productUm = new Product(user, "skate", 180.00);
+		Bid bidUm = new Bid(null, user3, 190.00);
+		Bid bidDois = new Bid(null, user2, 250.00);
+		
+		@SuppressWarnings("serial")
+		Set<Bid> bidsUm = new HashSet<Bid>() {
+			{
+				add(bidUm);
+				add(bidDois);
+			}
+		};
+		
+		productUm.setBids(bidsUm);
+		productUm.setHighestBid(bidDois);
+		productService.saveProduct(productUm);
+		System.out.println("produto criado: " + productUm.toString());
+		
+		Product productDois = new Product(user2, "notebook", 1200.00);
+		Bid bidTres = new Bid(null, user, 1200.00);
+		Bid bidQuatro = new Bid(null, user3, 1300.00);
+		
+		@SuppressWarnings("serial")
+		Set<Bid> bidsDois = new HashSet<Bid>() {
+			{
+				add(bidTres);
+				add(bidQuatro);
+			}
+		};
+		
+		productDois.setBids(bidsDois);
+		productDois.setHighestBid(bidQuatro);
+		productDois.setActive(false);
+		productService.saveProduct(productDois);
+		System.out.println("produto criado: " + productDois.toString());
+		
 		Optional<User> queryUser = userService.findUser(user.getUsername(), user.getPassword());
 		if (queryUser.isEmpty()) {
 			System.out.println("User not found");
@@ -60,33 +92,9 @@ public class DataLoader implements ApplicationRunner {
 			};
 			
 			product.setBids(bids);
-			bid.setProduct(product);
-			Comment comment = new Comment("essa bicicleta anda??", null, product, user2);
-			Comment commentChild = new Comment("e ela vai andar como se n tem pernas??", comment, product, foundUser);
-			commentChild.setParent(comment);
-			comment.setChildren(new ArrayList<Comment>(Arrays.asList(commentChild)));
-			
-			Set<Comment> comments = new HashSet<Comment>() {
-				{
-					add(comment);
-				}
-			};
-			product.setComments(comments);
-			System.out.println("DEBUG PRODUCT: " + product.toString());
+			product.setHighestBid(bids.iterator().next());
 			productService.saveProduct(product);
-			List<Product> queryProducts = productService.findByUserId(foundUser.getId());
-			
-			if (queryProducts.isEmpty())
-				System.out.println("Products not found");
-			else
-				System.out.println("Products found: " + queryProducts.toString());
-			
-			List<Product> queryBidsProducts = productService.findActiveBidsByUserId(foundUser.getId());
-			if (queryBidsProducts.isEmpty())
-				System.out.println("Products with bid not found");
-			else
-				System.out.println("Active products with bid found: " + queryBidsProducts.toString());
+			System.out.println("produto criado: " + product.toString());
 		}
-
 	}
 }

@@ -31,11 +31,14 @@ public class ProductController {
         return productService.saveComment(comment);
     }
     
-    @PutMapping("product/remove/{userId}")
+    @PutMapping("product/remove/user-{userId}/product-{productId}")
     public Product setProductToInactive(@RequestBody Integer productId) {
     	Product product = productService.findActiveProductById(productId);
-    	product.setActive(false);
-    	return productService.saveProduct(product);
+    	if (product.getUser().getId().equals(productId)) {
+    		product.setActive(false);
+    		return productService.saveProduct(product);
+    	}
+    	return null;
     }
     
     // Finds the products the user is selling

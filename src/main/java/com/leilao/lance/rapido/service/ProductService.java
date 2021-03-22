@@ -29,6 +29,10 @@ public class ProductService {
     public Product saveProduct(Product product){
         return productRepository.save(product);
     }
+    
+    public Bid saveBid(Bid bid) {
+    	return bidRepository.save(bid);
+    }
 
     public List<Product> getCatalog(){
     	List<Product> products = productRepository.findByActiveTrue();
@@ -94,6 +98,10 @@ public class ProductService {
     		if (bid.getProduct().getHighestBid().equals(bid))
     			boughtProducts.add(bid.getProduct());
     	}
+    	
+    	if (boughtProducts.equals(null))
+    		return Collections.emptyList();
+    	
     	return boughtProducts;
     }
 
