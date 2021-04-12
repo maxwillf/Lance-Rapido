@@ -2,12 +2,15 @@ package com.leilao.lance.rapido.service;
 
 import com.leilao.lance.rapido.model.Bid;
 import com.leilao.lance.rapido.model.Comment;
+import com.leilao.lance.rapido.model.Eletronico;
+import com.leilao.lance.rapido.model.Movel;
 import com.leilao.lance.rapido.model.Product;
+import com.leilao.lance.rapido.model.Veiculo;
 import com.leilao.lance.rapido.repository.BidRepository;
 import com.leilao.lance.rapido.repository.ProductRepository;
-import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -15,44 +18,123 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+//TODO: Implementar padrão Strategy para a regra de cada subclasse.
+//Veiculo: Diferenca de lances de no minimo R$500, minimamente 3 imagens, campo document necessario.
+//Movel: Diferenca de lances de no minimo R$20, minimamente 1 imagem.
+//Eletronico: Diferença de lances de no minimo R$10, minimamente 1 imagem, campo voltagem necessario.
+// Pode mudar isso a vontade, o importante é que cada regra tenha algo diferente.
+
 @Component
-@Transactional
 public class ProductService {
-    private final ProductRepository productRepository;
+	@Autowired
+	private final ProductRepository<Product> productRepository;
+	
+	@Autowired
+    private final ProductRepository<Veiculo> veiculoRepository;
+	
+	@Autowired
+	private final ProductRepository<Movel> movelRepository;
+	
+	@Autowired
+	private final ProductRepository<Eletronico> eletronicoRepository;
+	
+	@Autowired
     private final BidRepository bidRepository;
 
-    public ProductService(ProductRepository productRepository, BidRepository bidRepository){
-        this.productRepository = productRepository;
+	// Da pra retirar os repositorios das subclasses e deixar apenas o productRepository,
+	// mas vai ser necessario fazer um cast da subclasse para a classe pai nos metodos.
+    public ProductService(ProductRepository<Veiculo> veiculoRepository, BidRepository bidRepository, ProductRepository<Movel> movelRepository,
+    		ProductRepository<Eletronico> eletronicoRepository, ProductRepository<Product> productRepository){
+        this.veiculoRepository = veiculoRepository;
         this.bidRepository = bidRepository;
-    }
-
-    public Product saveProduct(Product product){
-        return productRepository.save(product);
+        this.movelRepository = movelRepository;
+        this.eletronicoRepository = eletronicoRepository;
+        this.productRepository = productRepository;
     }
     
-    public Bid saveBid(Bid bid) {
-    	return bidRepository.save(bid);
-    }
-
-    public List<Product> getCatalog(){
-    	List<Product> products = productRepository.findByActiveTrue();
+    // Destrinchar as regras de cada subclasse contida aqui no padrao strategy
+    public Product saveProduct(Product product) {
+    	if (!product.equals(productRepository.findByCreationTimeAndUserId(product.getCreationTime(), product.getUser().getId())))
+    		return productRepository.save(product);
     	
-    	if (products.isEmpty())
-    		return Collections.emptyList();
+    	if (product.getImages() == null)
+			return null;
     	
-    	for (Product product : products) {
-    		if (!updateProductState(product).isActive())
-    			products.remove(product);
+    	double bidDifference = 0.00;
+    	if (product.getClass().equals(Veiculo.class)) {
+    		bidDifference = 500.00;
+    		Veiculo veiculo = (Veiculo) product;
+    		
+    		if (veiculo.getDocumento() == null)
+    			return null;
+    		
+    	} else if (product.getClass().equals(Eletronico.class)) {
+    		bidDifference = 10.00;
+    		Eletronico eletronico = (Eletronico) product;
+    		
+    		if (eletronico.getVoltagem() != 110 || eletronico.getVoltagem() != 220)
+    			return null;
+    		
+    	} else if (product.getClass().equals(Movel.class)) {
+    		bidDifference = 20.00;
+    	} else {
+    		return null;
     	}
     	
-        return products;
+    	Bid lastBid = product.getBids().iterator().next();
+    	if (lastBid.getBidValue() - findHighestBid(product).getBidValue() < bidDifference)
+    		return null;
+    	
+    	return productRepository.save(product);
+    }
+    
+    public List<Veiculo> getVeiculoCatalog(){
+    	List<Veiculo> veiculos = veiculoRepository.findByActiveTrue();
+    	
+    	if (veiculos.isEmpty())
+    		return Collections.emptyList();
+    	
+    	for (Veiculo veiculo : veiculos) {
+    		if (!updateProductState(veiculo).isActive())
+    			veiculos.remove(veiculo);
+    	}
+    	
+        return veiculos;
+    }
+    
+    public List<Movel> getMovelCatalog(){
+    	List<Movel> moveis = movelRepository.findByActiveTrue();
+    	
+    	if (moveis.isEmpty())
+    		return Collections.emptyList();
+    	
+    	for (Movel movel : moveis) {
+    		if (!updateProductState(movel).isActive())
+    			moveis.remove(movel);
+    	}
+    	
+        return moveis;
+    }
+    
+    public List<Eletronico> getEletronicoCatalog(){
+    	List<Eletronico> eletronicos = eletronicoRepository.findByActiveTrue();
+    	
+    	if (eletronicos.isEmpty())
+    		return Collections.emptyList();
+    	
+    	for (Eletronico eletronico : eletronicos) {
+    		if (!updateProductState(eletronico).isActive())
+    			eletronicos.remove(eletronico);
+    	}
+    	
+        return eletronicos;
     }
     
     public Product updateProductState(Product product) {
     	if (LocalDateTime.now().isAfter(product.getTimeLimit())) {
     		if (product.isActive()) {
     			product.setActive(false);
-    			saveProduct(product);
+    			productRepository.save(product);
     		}
     	}
     	
@@ -72,7 +154,7 @@ public class ProductService {
             bids.add(bid);
             product.setBids(bids);
             product.setHighestBid(findHighestBid(product));
-            saveProduct(product);
+            productRepository.save(product);
             return product;
         }
     }
@@ -82,27 +164,52 @@ public class ProductService {
     		return null;
     	
         Bid highestBid = product.getBids().iterator().next();
-        if (product.getBids().size() > 1) {
-	        for (Bid bid: product.getBids()) {
-	        	if (bid.getBidValue() > highestBid.getBidValue())
-	        		highestBid = bid;
-	        }
-        }
     	return highestBid;
     }
     
-    public List<Product> findUserBoughtProducts(Integer userId) {
+    public List<Product> findUserBoughtVeiculos(Integer userId) {
     	Set<Bid> bids = bidRepository.findByUserId(userId);
-    	List<Product> boughtProducts = Collections.emptyList();
+    	List<Product> boughtVeiculos = Collections.emptyList();
     	for (Bid bid : bids) {
-    		if (bid.getProduct().getHighestBid().equals(bid))
-    			boughtProducts.add(bid.getProduct());
+    		if (bid.getProduct().getClass().equals(Veiculo.class)) {
+	    		if (bid.getProduct().getHighestBid().equals(bid))
+	    			boughtVeiculos.add(bid.getProduct());
+    		}
     	}
     	
-    	if (boughtProducts.equals(null))
+    	if (boughtVeiculos.equals(null))
     		return Collections.emptyList();
+    	return boughtVeiculos;
+    }
     	
-    	return boughtProducts;
+    public List<Product> findUserBoughtEletronicos(Integer userId) {
+    	Set<Bid> bids = bidRepository.findByUserId(userId);
+    	List<Product> boughtEletronicos = Collections.emptyList();
+    	for (Bid bid : bids) {
+    		if (bid.getProduct().getClass().equals(Eletronico.class)) {
+	    		if (bid.getProduct().getHighestBid().equals(bid))
+	    			boughtEletronicos.add(bid.getProduct());
+    		}
+    	}
+    	
+    	if (boughtEletronicos.equals(null))
+    		return Collections.emptyList();
+    	return boughtEletronicos;
+    }
+        	
+    public List<Product> findUserBoughtMoveis(Integer userId) {
+    	Set<Bid> bids = bidRepository.findByUserId(userId);
+    	List<Product> boughtMoveis = Collections.emptyList();
+    	for (Bid bid : bids) {
+    		if (bid.getProduct().getClass().equals(Movel.class)) {
+	    		if (bid.getProduct().getHighestBid().equals(bid))
+	    			boughtMoveis.add(bid.getProduct());
+    		}
+    	}
+    	
+    	if (boughtMoveis.equals(null))
+    		return Collections.emptyList();
+    	return boughtMoveis;
     }
 
     public Product saveComment(Comment comment){

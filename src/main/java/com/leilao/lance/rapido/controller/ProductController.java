@@ -54,10 +54,10 @@ public class ProductController {
     }
 
     // Finds the active products being sold
-    @GetMapping("/catalog")
+    /*@GetMapping("/catalog")
     public List<Product> getCatalog(){
         return productService.getCatalog();
-    }
+    }*/
     
     // Finds the sold products from an user
     @GetMapping("/product/sold-items/{userId}")
@@ -72,10 +72,10 @@ public class ProductController {
     }
     
     // Finds the products an user bought
-    @GetMapping("/product/bought-items/{userId}")
+    /*@GetMapping("/product/bought-items/{userId}")
     public List<Product> findUserBoughtProducts(@PathVariable(value = "userId") Integer userId){
     	return productService.findUserBoughtProducts(userId);
-    }
+    }*/
     
     // Finds the highest product bid
     @GetMapping("/product/highest-bid/{productId}")

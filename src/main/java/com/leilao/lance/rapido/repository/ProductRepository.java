@@ -3,16 +3,19 @@ package com.leilao.lance.rapido.repository;
 import com.leilao.lance.rapido.model.Product;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product,Integer> {
-	Product findByIdAndActiveTrue(Integer productId);
-    List<Product> findByUserId(Integer userId);
-    List<Product> findByBidsUserIdAndActiveTrue(Integer userId);
-    List<Product> findByUserIdAndActiveTrue(Integer userId);
-    List<Product> findByUserIdAndActiveFalseAndBidsNotNull(Integer userId);
-    List<Product> findByActiveTrue();
+public interface ProductRepository<T extends Product> extends JpaRepository<T,Integer> {
+	T findByIdAndActiveTrue(Integer TId);
+	T findByCreationTimeAndUserId(LocalDateTime creationTime, Integer userId);
+    List<T> findByUserId(Integer userId);
+    List<T> findByBidsUserIdAndActiveTrue(Integer userId);
+    List<T> findByUserIdAndActiveTrue(Integer userId);
+    List<T> findByUserIdAndActiveFalseAndBidsNotNull(Integer userId);
+    List<T> findByActiveTrue();
 }

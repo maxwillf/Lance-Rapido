@@ -1,48 +1,51 @@
 package com.leilao.lance.rapido.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
+
+import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Entity
+// Possiveis erros futuros podem ser causados por @Data. Caso ocorra, substituir por @Getter e @Setter
 @Data
-@NoArgsConstructor
-public class Product implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Product implements Serializable{
+	private static final long serialVersionUID = 1L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-
+    protected Integer id;
+	
     @ManyToOne
-    private User user;
+    protected User user;
 
-    private String name;
-    private LocalDateTime creationTime;
-    private LocalDateTime lastUpdateTime;
-    private Double initialBid;
-    private LocalDateTime timeLimit;
-    private boolean active;
+    protected String type;
+    protected LocalDateTime creationTime;
+    protected LocalDateTime lastUpdateTime;
+    protected Double initialBid;
+    protected LocalDateTime timeLimit;
+    protected boolean active;
+    protected String description;
+    protected int condicao;
     
     @OneToOne
-    private Bid highestBid;
+    protected Bid highestBid;
 
     @OneToMany(fetch = FetchType.EAGER)
-    private Set<ProductImage> images;
+    protected Set<ProductImage> images;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Bid> bids;
+    protected Set<Bid> bids;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Comment> comments;
+    protected Set<Comment> comments;
     
-    public Product(User user, String name, double initialBid) {
+    public Product(User user, String type, double initialBid) {
     	this.user = user;
-    	this.name = name;
+    	this.type = type;
     	this.initialBid = initialBid;
     	this.creationTime = LocalDateTime.now();
     	this.lastUpdateTime = LocalDateTime.now();
@@ -53,5 +56,4 @@ public class Product implements Serializable {
     	this.bids = null;
     	this.comments = null;
     }
-    
 }

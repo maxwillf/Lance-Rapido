@@ -2,8 +2,11 @@ package com.leilao.lance.rapido;
 
 import com.leilao.lance.rapido.model.Bid;
 import com.leilao.lance.rapido.model.Comment;
+import com.leilao.lance.rapido.model.Eletronico;
+import com.leilao.lance.rapido.model.Movel;
 import com.leilao.lance.rapido.model.Product;
 import com.leilao.lance.rapido.model.User;
+import com.leilao.lance.rapido.model.Veiculo;
 import com.leilao.lance.rapido.service.ProductService;
 import com.leilao.lance.rapido.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +15,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
@@ -38,7 +38,7 @@ public class DataLoader implements ApplicationRunner {
 		userService.saveUser(user3);
 		System.out.println("Created " + user.getUsername() + ", " + user2.getUsername() + ", " + user3.getUsername());
 		
-		Product productUm = new Product(user, "skate", 180.00);
+		Veiculo veiculoUm = new Veiculo(user, "Celta", 180.00, "2008", "Gasolina comum", "165/70r13");
 		Bid bidUm = new Bid(null, user3, 190.00);
 		Bid bidDois = new Bid(null, user2, 250.00);
 		
@@ -50,12 +50,12 @@ public class DataLoader implements ApplicationRunner {
 			}
 		};
 		
-		productUm.setBids(bidsUm);
-		productUm.setHighestBid(bidDois);
-		productService.saveProduct(productUm);
-		System.out.println("produto criado: " + productUm.toString());
+		veiculoUm.setBids(bidsUm);
+		veiculoUm.setHighestBid(bidDois);
+		productService.saveProduct(veiculoUm);
+		System.out.println("veiculo criado: " + veiculoUm.toString());
 		
-		Product productDois = new Product(user2, "notebook", 1200.00);
+		Movel movelUm = new Movel(user2, "sofa-cama", 1200.00, true, "materiais", 50, 30, 180);
 		Bid bidTres = new Bid(null, user, 1200.00);
 		Bid bidQuatro = new Bid(null, user3, 1300.00);
 		
@@ -67,11 +67,11 @@ public class DataLoader implements ApplicationRunner {
 			}
 		};
 		
-		productDois.setBids(bidsDois);
-		productDois.setHighestBid(bidQuatro);
-		productDois.setActive(false);
-		productService.saveProduct(productDois);
-		System.out.println("produto criado: " + productDois.toString());
+		movelUm.setBids(bidsDois);
+		movelUm.setHighestBid(bidQuatro);
+		movelUm.setActive(false);
+		productService.saveProduct(movelUm);
+		System.out.println("movel criado: " + movelUm.toString());
 		
 		Optional<User> queryUser = userService.findUser(user.getUsername(), user.getPassword());
 		if (queryUser.isEmpty()) {
@@ -80,7 +80,7 @@ public class DataLoader implements ApplicationRunner {
 			System.out.println("User found: " + queryUser.get().toString());
 			User foundUser = queryUser.get();
 
-			Product product = new Product(foundUser, "bicicleta", 250.00);
+			Eletronico eletronicoUm = new Eletronico(foundUser, "notebook", 250.00, 2015, 220, "3 pinos");
 			
 			Bid bid = new Bid(null, user2, 250.00);
 			
@@ -91,10 +91,10 @@ public class DataLoader implements ApplicationRunner {
 				}
 			};
 			
-			product.setBids(bids);
-			product.setHighestBid(bids.iterator().next());
-			productService.saveProduct(product);
-			System.out.println("produto criado: " + product.toString());
+			eletronicoUm.setBids(bids);
+			eletronicoUm.setHighestBid(bids.iterator().next());
+			productService.saveProduct(eletronicoUm);
+			System.out.println("eletronico criado: " + eletronicoUm.toString());
 		}
 	}
 }
