@@ -15,6 +15,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -52,9 +53,17 @@ public class DataLoader implements ApplicationRunner {
 		
 		veiculoUm.setBids(bidsUm);
 		veiculoUm.setHighestBid(bidDois);
-		productService.saveProduct(veiculoUm);
+		Product veiculoUmResultado = productService.saveProduct(veiculoUm);
+		List<Product> veiculosList = productService.getCatalogByType(Veiculo.class);
+		Set<Bid> resultBids = veiculoUmResultado.getBids();
+		Bid bidExtra = new Bid(veiculoUmResultado, user3, 750.00);
+	resultBids.add(bidExtra);
+ productService.saveProduct(veiculoUmResultado);
 		System.out.println("veiculo criado: " + veiculoUm.toString());
-		
+		Veiculo veiculoDois = new Veiculo();
+		veiculoDois.setUser(user);
+		productService.saveProduct(veiculoDois);
+
 		Movel movelUm = new Movel(user2, "sofa-cama", 1200.00, true, "materiais", 50, 30, 180);
 		Bid bidTres = new Bid(null, user, 1200.00);
 		Bid bidQuatro = new Bid(null, user3, 1300.00);
@@ -96,5 +105,7 @@ public class DataLoader implements ApplicationRunner {
 			productService.saveProduct(eletronicoUm);
 			System.out.println("eletronico criado: " + eletronicoUm.toString());
 		}
+		List<Product> eletronicoList = productService.getCatalogByType(Eletronico.class);
+		int x = 3;
 	}
 }

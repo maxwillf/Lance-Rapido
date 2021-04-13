@@ -13,7 +13,10 @@ public class Eletronico extends Product{
 	private int anoCompra;
 	private int voltagem;
 	private String tipoTomada;
-	
+	public Eletronico(){
+		super(
+		);
+	};
     public Eletronico(User user, String type, double initialBid, int anoCompra, int voltagem, String tipoTomada) {
     	super(user, type, initialBid);
     	this.anoCompra = anoCompra;

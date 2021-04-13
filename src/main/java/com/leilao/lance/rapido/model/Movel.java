@@ -16,8 +16,11 @@ public class Movel extends Product{
 	private int altura;
 	private int largura;
 	private int comprimento;
-	
-    public Movel(User user, String type, double initialBid, Boolean dobravel, String materiais, int altura, int largura, int comprimento) {
+
+	public Movel(){
+		super();
+	}
+	public Movel(User user, String type, double initialBid, Boolean dobravel, String materiais, int altura, int largura, int comprimento) {
     	super(user, type, initialBid);
     	this.dobravel = dobravel;
     	this.materiais = materiais;

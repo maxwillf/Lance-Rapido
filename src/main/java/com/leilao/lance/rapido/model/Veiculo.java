@@ -17,7 +17,10 @@ public class Veiculo extends Product {
 	
 	@OneToOne
 	private ProductImage documento;
-	
+
+	public Veiculo(){
+			super();
+	}
     public Veiculo(User user, String type, double initialBid, String modelo, String combustivel, String tipoPneu) {
     	super(user, type, initialBid);
     	this.modelo = modelo;
