@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-// Possiveis erros futuros podem ser causados por @Data. Caso ocorra, substituir por @Getter e @Setter
 @Data
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)

@@ -61,7 +61,7 @@ public class ProductService {
 		List<Product> filteredProducts = new ArrayList<Product>();
 		Class<?> productType = stringToProductType(type);
 		if(productType == null) return null;
-		products.removeIf(product -> product.getClass().equals(productType) && !updateProductState(product).isActive());
+		products.removeIf(product -> !product.getClass().equals(productType) || !updateProductState(product).isActive());
         return products;
     }
 

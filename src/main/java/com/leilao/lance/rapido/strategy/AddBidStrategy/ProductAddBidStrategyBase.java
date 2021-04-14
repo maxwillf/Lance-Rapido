@@ -9,7 +9,6 @@ import java.util.Set;
 public class ProductAddBidStrategyBase implements ProductAddBidStrategy {
    Product addBid(Product product,Bid bid, Double bidDifference){
       Set<Bid> bids = product.getBids();
-      Bid highestBid = bids.iterator().next();
 
       if(bids == null || bids.isEmpty()){
          Set<Bid> newBids = new HashSet<Bid>() {
@@ -21,7 +20,8 @@ public class ProductAddBidStrategyBase implements ProductAddBidStrategy {
          product.setHighestBid(bid);
          return product;
       }
-      else if (bid.getBidValue() - highestBid.getBidValue() >= bidDifference){
+      Bid highestBid = bids.iterator().next();
+      if (bid.getBidValue() - highestBid.getBidValue() >= bidDifference){
          bids.add(bid);
          product.setBids(bids);
          product.setHighestBid(bid);
