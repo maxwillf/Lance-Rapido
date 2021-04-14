@@ -1,9 +1,11 @@
 package com.leilao.lance.rapido.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 
 import lombok.Data;
+import org.hibernate.annotations.Cascade;
 
 @Entity
 @Data
@@ -15,16 +17,16 @@ public class Veiculo extends Product {
 	private String combustivel;
 	private String tipoPneu;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private ProductImage documento;
 
 	public Veiculo(){
 			super();
 	}
-    public Veiculo(User user, String type, double initialBid, String modelo, String combustivel, String tipoPneu) {
+    public Veiculo(User user, String type, double initialBid, String modelo, String combustivel, String tipoPneu, ProductImage documento) {
     	super(user, type, initialBid);
     	this.modelo = modelo;
-    	this.documento = null;
+    	this.documento = documento;
     	this.combustivel = combustivel;
     	this.tipoPneu = tipoPneu;
     }

@@ -1,12 +1,6 @@
 package com.leilao.lance.rapido;
 
-import com.leilao.lance.rapido.model.Bid;
-import com.leilao.lance.rapido.model.Comment;
-import com.leilao.lance.rapido.model.Eletronico;
-import com.leilao.lance.rapido.model.Movel;
-import com.leilao.lance.rapido.model.Product;
-import com.leilao.lance.rapido.model.User;
-import com.leilao.lance.rapido.model.Veiculo;
+import com.leilao.lance.rapido.model.*;
 import com.leilao.lance.rapido.service.ProductService;
 import com.leilao.lance.rapido.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +32,12 @@ public class DataLoader implements ApplicationRunner {
 		userService.saveUser(user2);
 		userService.saveUser(user3);
 		System.out.println("Created " + user.getUsername() + ", " + user2.getUsername() + ", " + user3.getUsername());
-		
-		Veiculo veiculoUm = new Veiculo(user, "Celta", 180.00, "2008", "Gasolina comum", "165/70r13");
+		Veiculo veiculoUm = new Veiculo(user, "Celta", 180.00, "2008", "Gasolina comum", "165/70r13", new ProductImage());
+		veiculoUm.setImages(
+				new HashSet<ProductImage>() {{
+					add(new ProductImage());
+				}
+				});
 		Bid bidUm = new Bid(null, user3, 190.00);
 		Bid bidDois = new Bid(null, user2, 250.00);
 		
@@ -54,17 +52,23 @@ public class DataLoader implements ApplicationRunner {
 		veiculoUm.setBids(bidsUm);
 		veiculoUm.setHighestBid(bidDois);
 		Product veiculoUmResultado = productService.saveProduct(veiculoUm);
-		List<Product> veiculosList = productService.getCatalogByType(Veiculo.class);
 		Set<Bid> resultBids = veiculoUmResultado.getBids();
 		Bid bidExtra = new Bid(veiculoUmResultado, user3, 750.00);
 	resultBids.add(bidExtra);
  productService.saveProduct(veiculoUmResultado);
 		System.out.println("veiculo criado: " + veiculoUm.toString());
 		Veiculo veiculoDois = new Veiculo();
+		veiculoDois.setInitialBid(5d);
 		veiculoDois.setUser(user);
 		productService.saveProduct(veiculoDois);
+		List<Product> veiculosList = productService.getCatalogByType("veiculo");
 
 		Movel movelUm = new Movel(user2, "sofa-cama", 1200.00, true, "materiais", 50, 30, 180);
+		movelUm.setImages(
+				new HashSet<ProductImage>() {{
+					add(new ProductImage());
+				}
+				});
 		Bid bidTres = new Bid(null, user, 1200.00);
 		Bid bidQuatro = new Bid(null, user3, 1300.00);
 		
@@ -90,7 +94,12 @@ public class DataLoader implements ApplicationRunner {
 			User foundUser = queryUser.get();
 
 			Eletronico eletronicoUm = new Eletronico(foundUser, "notebook", 250.00, 2015, 220, "3 pinos");
-			
+
+			eletronicoUm.setImages(
+					new HashSet<ProductImage>() {{
+						add(new ProductImage());
+					}
+					});
 			Bid bid = new Bid(null, user2, 250.00);
 			
 			@SuppressWarnings("serial")
@@ -105,7 +114,7 @@ public class DataLoader implements ApplicationRunner {
 			productService.saveProduct(eletronicoUm);
 			System.out.println("eletronico criado: " + eletronicoUm.toString());
 		}
-		List<Product> eletronicoList = productService.getCatalogByType(Eletronico.class);
+		List<Product> eletronicoList = productService.getCatalogByType("eletronico");
 		int x = 3;
 	}
 }

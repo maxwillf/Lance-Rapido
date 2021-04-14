@@ -43,7 +43,7 @@ public abstract class Product implements Serializable{
     @OneToOne
     protected Bid highestBid;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     protected Set<ProductImage> images;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
