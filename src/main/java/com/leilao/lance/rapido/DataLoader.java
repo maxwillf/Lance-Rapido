@@ -39,8 +39,8 @@ public class DataLoader implements ApplicationRunner {
 				}
 				});
 		Bid bidUm = new Bid(null, user3, 190.00);
-		Bid bidDois = new Bid(null, user2, 250.00);
-		
+		Bid bidDois = new Bid(veiculoUm, user2, 250.00);
+
 		@SuppressWarnings("serial")
 		Set<Bid> bidsUm = new HashSet<Bid>() {
 			{
@@ -48,14 +48,14 @@ public class DataLoader implements ApplicationRunner {
 				add(bidDois);
 			}
 		};
-		
+
 		veiculoUm.setBids(bidsUm);
 		veiculoUm.setHighestBid(bidDois);
 		Product veiculoUmResultado = productService.saveProduct(veiculoUm);
 		Set<Bid> resultBids = veiculoUmResultado.getBids();
 		Bid bidExtra = new Bid(veiculoUmResultado, user3, 750.00);
-	resultBids.add(bidExtra);
- productService.saveProduct(veiculoUmResultado);
+		resultBids.add(bidExtra);
+		productService.saveProduct(veiculoUmResultado);
 		System.out.println("veiculo criado: " + veiculoUm.toString());
 		Veiculo veiculoDois = new Veiculo();
 		veiculoDois.setInitialBid(5d);
@@ -69,9 +69,9 @@ public class DataLoader implements ApplicationRunner {
 					add(new ProductImage());
 				}
 				});
-		Bid bidTres = new Bid(null, user, 1200.00);
-		Bid bidQuatro = new Bid(null, user3, 1300.00);
-		
+		Bid bidTres = new Bid(movelUm, user, 1200.00);
+		Bid bidQuatro = new Bid(movelUm, user3, 1300.00);
+
 		@SuppressWarnings("serial")
 		Set<Bid> bidsDois = new HashSet<Bid>() {
 			{
@@ -79,13 +79,13 @@ public class DataLoader implements ApplicationRunner {
 				add(bidQuatro);
 			}
 		};
-		
+
 		movelUm.setBids(bidsDois);
 		movelUm.setHighestBid(bidQuatro);
 		movelUm.setActive(false);
-		productService.saveProduct(movelUm);
+		Product movelRetorno = productService.saveProduct(movelUm);
 		System.out.println("movel criado: " + movelUm.toString());
-		
+
 		Optional<User> queryUser = userService.findUser(user.getUsername(), user.getPassword());
 		if (queryUser.isEmpty()) {
 			System.out.println("User not found");
@@ -100,21 +100,20 @@ public class DataLoader implements ApplicationRunner {
 						add(new ProductImage());
 					}
 					});
-			Bid bid = new Bid(null, user2, 250.00);
-			
+			Bid bid = new Bid(eletronicoUm, user2, 250.00);
+
 			@SuppressWarnings("serial")
 			Set<Bid> bids = new HashSet<Bid>() {
 				{
 					add(bid);
 				}
 			};
-			
+
 			eletronicoUm.setBids(bids);
 			eletronicoUm.setHighestBid(bids.iterator().next());
-			productService.saveProduct(eletronicoUm);
+			Product eletronicoResultado = productService.saveProduct(eletronicoUm);
 			System.out.println("eletronico criado: " + eletronicoUm.toString());
 		}
 		List<Product> eletronicoList = productService.getCatalogByType("eletronico");
-		int x = 3;
 	}
 }

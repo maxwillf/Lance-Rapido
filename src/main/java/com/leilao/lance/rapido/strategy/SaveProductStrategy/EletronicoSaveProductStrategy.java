@@ -13,7 +13,7 @@ public class EletronicoSaveProductStrategy extends SaveProductStrategyBase imple
         Product basicCheckedProduct = checkProduct(product);
         if(basicCheckedProduct == null) return null;
         Eletronico eletronico = (Eletronico) basicCheckedProduct;
-        if (eletronico.getVoltagem() != 110 || eletronico.getVoltagem() != 220){
+        if (eletronico.getVoltagem() != 110 && eletronico.getVoltagem() != 220){
             return null;
         }
         else {

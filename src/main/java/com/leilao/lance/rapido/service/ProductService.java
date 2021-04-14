@@ -19,12 +19,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.*;
 
-//TODO: Implementar padrão Strategy para a regra de cada subclasse.
-//Veiculo: Diferenca de lances de no minimo R$500, minimamente 3 imagens, campo document necessario.
-//Movel: Diferenca de lances de no minimo R$20, minimamente 1 imagem.
-//Eletronico: Diferença de lances de no minimo R$10, minimamente 1 imagem, campo voltagem necessario.
-// Pode mudar isso a vontade, o importante é que cada regra tenha algo diferente.
-
 @Component
 public class ProductService {
 
@@ -34,8 +28,6 @@ public class ProductService {
 	@Autowired
     private final BidRepository bidRepository;
 
-	// Da pra retirar os repositorios das subclasses e deixar apenas o productRepository,
-	// mas vai ser necessario fazer um cast da subclasse para a classe pai nos metodos.
     public ProductService( ProductRepository<Product> productRepository, BidRepository bidRepository){
         this.productRepository = productRepository;
         this.bidRepository = bidRepository;
@@ -69,16 +61,8 @@ public class ProductService {
 		List<Product> filteredProducts = new ArrayList<Product>();
 		Class<?> productType = stringToProductType(type);
 		if(productType == null) return null;
-		if (products.isEmpty())
-			return Collections.emptyList();
-    	
-    	for (Product product : products) {
-    		if (product.getClass().equals(productType) &&
-    			updateProductState(product).isActive()){
-				filteredProducts.add(product);
-			}
-    	}
-        return filteredProducts;
+		products.removeIf(product -> product.getClass().equals(productType) && !updateProductState(product).isActive());
+        return products;
     }
 
 	public Product updateProductState(Product product) {
@@ -123,7 +107,8 @@ public class ProductService {
 		Set<Bid> bids = bidRepository.findByUserId(userId);
 		List<Product> boughtProducts = new ArrayList<>();
 		for (Bid bid : bids) {
-				if (bid.getProduct().getHighestBid().equals(bid))
+			Product currentProduct = bid.getProduct();
+				if (currentProduct != null && currentProduct.getHighestBid().equals(bid) && !bid.getProduct().isActive())
 					boughtProducts.add(bid.getProduct());
 		}
 
@@ -138,8 +123,9 @@ public class ProductService {
 		Class<?> cls = stringToProductType(type);
 		if(cls == null) return null;
 		for (Bid bid : bids) {
-			if (cls == null || bid.getProduct().getClass().equals(cls)) {
-				if (bid.getProduct().getHighestBid().equals(bid))
+			Product currentProduct = bid.getProduct();
+			if (cls != null && currentProduct != null && currentProduct.getClass().equals(cls) ) {
+				if (bid.getProduct().getHighestBid().equals(bid) && !bid.getProduct().isActive())
 					boughtProducts.add(bid.getProduct());
 			}
 		}
