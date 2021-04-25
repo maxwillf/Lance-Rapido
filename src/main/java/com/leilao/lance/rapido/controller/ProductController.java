@@ -4,10 +4,6 @@ package com.leilao.lance.rapido.controller;
 
 import com.leilao.lance.rapido.model.*;
 import com.leilao.lance.rapido.service.ProductService;
-import com.leilao.lance.rapido.strategy.SaveProductStrategy.EletronicoSaveProductStrategy;
-import com.leilao.lance.rapido.strategy.SaveProductStrategy.MovelSaveProductStrategy;
-import com.leilao.lance.rapido.strategy.SaveProductStrategy.SaveProductStrategyBase;
-import com.leilao.lance.rapido.strategy.SaveProductStrategy.VeiculoSaveProductStrategy;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

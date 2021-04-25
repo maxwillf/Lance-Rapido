@@ -1,7 +1,5 @@
 package com.leilao.lance.rapido.service;
 
-import com.leilao.lance.rapido.context.ProductAddBidContext;
-import com.leilao.lance.rapido.context.SaveProductContext;
 import com.leilao.lance.rapido.model.Bid;
 import com.leilao.lance.rapido.model.Comment;
 import com.leilao.lance.rapido.model.Eletronico;
@@ -35,10 +33,10 @@ public class ProductService {
     
     // Destrinchar as regras de cada subclasse contida aqui no padrao strategy
     public Product saveProduct(Product product) {
-		SaveProductContext saveProductContext = new SaveProductContext();
 		Class<?> productType = product.getClass();
-		saveProductContext.setSaveProductStrategy(findSaveProductStrategy(productType));
-		Product checkedProduct = saveProductContext.checkCanSaveProduct(product);
+		SaveProductStrategy saveProductStrategy = findSaveProductStrategy(productType);
+		if(saveProductStrategy == null) return null;
+		Product checkedProduct = saveProductStrategy.execute(product);
 		if(checkedProduct == null) return null;
     	if (productRepository.findByCreationTimeAndUserId(product.getCreationTime(), product.getUser().getId()) == null){
 			return productRepository.save(product);
@@ -77,7 +75,6 @@ public class ProductService {
     }
     
     public Product addBid(Bid bid) {
-    	ProductAddBidContext productContext = new ProductAddBidContext();
 		Optional<Product> productOpt = productRepository.findById(bid.getProduct().getId());
         if(productOpt.isEmpty()){
             return null;
@@ -90,9 +87,10 @@ public class ProductService {
             	return null;
 
             Class<?> productType = product.getClass();
-            productContext.setProductStrategy(findAddBidStrategy(productType));
+            ProductAddBidStrategy productAddBidStrategy =findAddBidStrategy(productType);
+            if(productAddBidStrategy == null) return null;
 
-			Product productResult = productContext.addBid(product,bid);
+			Product productResult = productAddBidStrategy.execute(product,bid);
 			if(productResult == null){
 				return null;
 			}
@@ -181,7 +179,7 @@ public class ProductService {
 		if(cls.equals(Eletronico.class)){
 			return new EletronicoAddBidStrategy();
 		}
-		return new ProductAddBidStrategyBase();
+		return null;
 	}
 
 	private SaveProductStrategy findSaveProductStrategy(Class<?> cls){
@@ -194,7 +192,7 @@ public class ProductService {
 		if(cls.equals(Eletronico.class)){
 			return new EletronicoSaveProductStrategy();
 		}
-		return new SaveProductStrategyBase();
+		return null;
 	}
 
 	private Bid findHighestBid(Product product) {

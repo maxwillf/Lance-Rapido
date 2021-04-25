@@ -5,7 +5,7 @@ import com.leilao.lance.rapido.model.Product;
 
 import java.util.Set;
 
-public class SaveProductStrategyBase implements SaveProductStrategy  {
+abstract public class SaveProductStrategyTemplateBase implements SaveProductStrategy  {
    public Product checkProduct(Product product){
       if(product.getInitialBid() == null || product.getUser() == null ||
          product.getImages() == null || product.getImages().isEmpty()){
@@ -14,7 +14,10 @@ public class SaveProductStrategyBase implements SaveProductStrategy  {
          return product;
       }
    }
-   public Product execute(Product product){
-      return checkProduct(product);
+   abstract Product productTypeSpecificChecking(Product product);
+   final public Product execute(Product product){
+      Product basicCheckedProduct = checkProduct(product);
+      if(basicCheckedProduct == null) return null;
+      return productTypeSpecificChecking(basicCheckedProduct);
    }
 }

@@ -6,7 +6,7 @@ import com.leilao.lance.rapido.model.Product;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ProductAddBidStrategyBase implements ProductAddBidStrategy {
+abstract public class ProductAddBidStrategyBase implements ProductAddBidStrategy {
    Product addBid(Product product,Bid bid, Double bidDifference){
       Set<Bid> bids = product.getBids();
 
@@ -30,7 +30,5 @@ public class ProductAddBidStrategyBase implements ProductAddBidStrategy {
          return null;
       }
    }
-   public Product execute(Product product,Bid bid){
-    return addBid(product,bid,0d);
-   }
+   abstract public Product execute(Product product,Bid bid);
 }
